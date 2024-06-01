@@ -18,4 +18,6 @@ See Contribute.md for more info and templates to help contribute
 ## Reporting Issues
 Please use the issue tracker to report bugs or request new topics.
 
+#
+
 Feel free to use the discussion feature to interact with the community or share your thoughts and comments.
