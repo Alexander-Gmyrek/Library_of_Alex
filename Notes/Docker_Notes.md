@@ -23,22 +23,204 @@ Docker is a platform that allows you to package applications into nice little bo
 
 ## Necessary files
 
-- Dockerfile
+- Dockerfile (This is just a text file)
 - docker-compose.yml
-- requirements.txt
+- (This is usually but not always required) requirements.txt
+- .dockerignore
 
-## To Compile
+## Dockerfile
+
+A Dockerfile is a script that contains a series of instructions on how to build a Docker image. It automates the process of creating a Docker image by specifying the operating system, software packages, configurations, and dependencies required for your application. 
+
+**Dockerfile tips:**
+
+- It’s important to remember that layers build up so they can only affect what comes after them.
+- To comment use “#”
+
+**Basic Structure of a Dockerfile:**
+
+- **FROM:** Specifies the base image you want to use for your docker image. Every Dockerfile starts with a “FROM” instruction.
+    - Example: “FROM python:3.9”
+    - This will use the official python runtime as the base image.
+- **LABEL**: Adds metadata to the image, such as maintainer information or version.
+    - Example: “LABEL maintainer="your.email@example.com"”
+    - So people know where to send their complements… or more likely tell you it broke.
+- **RUN**: Executes commands in the container during the image building process. It’s often used to install software packages.
+    - Example: RUN pip install --no-cache-dir -r requirements.txt
+    - This tells pip to install all of the packages you need
+    - Note: Docker uses the sh shell in case you were wondering
+- **COPY** or **ADD**: Copies files or directories from your local filesystem to the Docker image.
+    - Example: ”COPY . /app”
+    - This copies the current directory contents into the container at /app
+- **WORKDIR**: Sets the working directory for the subsequent instructions, simplifying the file path references.
+    - Example: “WORKDIR /app”
+    - This setts the working dir to /app
+- **EXPOSE**: Specifies the ports that the container will listen on at runtime. This is where you would connect to your program.
+    - Example: “EXPOSE 3360”
+    - In this case we are using 3360. Make sure this port is open. You can check with “netstat -ano | findstr :<port number>” on Windows.
+- **CMD**: Provides the default command to run when the container starts. Unlike `RUN`, `CMD` is not executed during the build process.
+    - Example: “CMD ["flask", "run", "--host=0.0.0.0"]”
+    - This tells it to run flask when the container launches
+- **ENTRYPOINT**: Configures a container that will run as an executable.
+    - Example: (Needs Example)
+- **ENV:** Defines an Environment Variable. These aren’t very secure so try using docker secrets if that is something you are worried about.
+    - Example: “ENV FLASK_APP=app.py”
+    - This sets FLASK_APP equal to app.py for all subsequent layers.
+
+**Example Docker File:** 
+
+```docker
+# Use an official Python runtime as a parent image
+FROM python:3.9
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
+# Define environment variable
+ENV FLASK_APP=app.py
+
+# Run flask when the container launches
+CMD ["flask", "run", "--host=0.0.0.0"]
+```
+
+## docker-compose.yml
+
+A configuration for defining and running multi-container docker applications. Docker Compose allows you to manage multiple containers as a single service. This means less work so it’s super important.
+
+**Basic Structure of docker-compose.yml:**
+
+- **version**: Specifies the version of the Compose file format.
+    - Example: “version: '3’”
+    - I use 3 will be using 3.
+- **services**: Defines a list of services (containers) that are part of the application.
+    - Example:
+    
+    ```yaml
+    services:
+    	web:
+    		# Service configuration goes here
+    	database:
+    		# Service configuration goes here
+    ```
+    
+- **service configuration**: Within each service, you specify how the container should be built and run.
+    - **Key Configuration Options:**
+        - 
+        - **image**: Specifies the Docker image to use for the container.
+            
+            ```yaml
+            services:
+              mysql:
+                image:mysql:latest
+            ```
+            
+        - **build**: Provides instructions to build the Docker image from a Dockerfile.
+            
+            ```yaml
+            services:
+              web:
+                build: .
+            ```
+            
+        - **ports**: Maps ports between the container and the host machine.
+            
+            ```yaml
+            services:
+              web:
+                ports:
+                  - "3360:3360"
+            ```
+            
+        - **volumes**: Mounts host machine directories or files into the container.
+            
+            ```yaml
+            services:
+              web:
+                volumes:
+                  - db_data:/var/lib/mysql
+                  - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            ```
+            
+        - **environment**: Sets environment variables for the container.
+            
+            ```yaml
+            services:
+              database:
+                image: mysql:latest
+                environment:
+                  MYSQL_ROOT_PASSWORD: GoodPassword
+                  MYSQL_DATABASE: ExampleDB
+                  MYSQL_USER: ExampleUser
+                  MYSQL_PASSWORD: ExamplePassword
+            ```
+            
+        - **depends_on**: Specifies dependencies between services, determining the order in which they are started.
+            
+            ```yaml
+            services:
+              web:
+                depends_on:
+                  - mysql
+            ```
+            
+
+**Example ‘docker-compose.yml’ File:**
+
+```yaml
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ExamplePassword
+      MYSQL_DATABASE: ExampleDB
+      MYSQL_USER: ExampleUser
+      MYSQL_PASSWORD: ExampleUserPassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  web:
+    build: .
+    container_name: flask_app
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+
+volumes:
+  db_data:
+
+```
+
+## To Start
 
 - docker-compose up --build
+- To run the services in the background try “docker-compose up -d”
 - If someone is using your ports try “netstat -ano | findstr :<port number>” then “taskkill /PID <pid_number> /F”
+- **Stop: “**docker-compose down**”**
 
-## **Set Up Docker**
+## **Basic Docker Setup/Steps**
 
-- Install Docker.
-- Write a Dockerfile.
-- Build the Docker image.
-- Run the Docker container.
-- Use Docker Compose for multi-container setups.
+1. Install Docker. You can do that here: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+2. Write a Dockerfile.
+3. Build the Docker image. 
+4. Run the Docker container. You can do this in the terminal with “docker-compose up --build”
+5. Use Docker Compose for multi-container setups.
 
 ## Access methods
 
@@ -48,6 +230,10 @@ Docker is a platform that allows you to package applications into nice little bo
 - **Volumes:** Used to persist data and share it between the container and the host.
 - **Environment Variables:** Used to pass configuration data to containers.
 - **Docker Networks:** Facilitate communication between multiple containers.
+
+## Docker Secrets
+
+*Needs more research
 
 ## Definitions
 
