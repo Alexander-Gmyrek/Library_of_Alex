@@ -1,6 +1,6 @@
 # Windows Terminal Notes
 
-Created: June 1, 2024 2:46 PM
+Created: June 1, 2024 2:46 AM
 
 ## Quick Notes
 
