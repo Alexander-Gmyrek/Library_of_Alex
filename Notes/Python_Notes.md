@@ -18,6 +18,13 @@ Created: June 2, 2024 2:15 PM
     
 - What is lambda
     - It’s an inline function and if you use it it makes you look cool?
+    - Ok update apparently it has something to do with functional programming. Functional programming is basically programming using only functions with no changing state. This means that for any given input you get the same output every time. One of the concepts from functional programming is passing one function into another broader function. From that you get the idea of “currying” where instead of handling the entire operation at once it instead Returns a function that handles the next part of the operation. The later part has the previous state “bound” to it and the new on the fly created function is what gets called when we want to check a condition. So instead of binding function to an object you bind objects to a function. Labda is the next step and basically allows you to simplify and chain these together to basically create a data pipeline out of “fundamental functions” like map, filter, slice, or take. In functional programming, “fundamental functions” are often referred to as “higher-order functions” or “functional programming primitives.”
+- Testing notes
+    - Pure Function: A function that has no side effects.
+    - Side Effect: these are things like accessing the file system, making network calls, accessing global variables, accessing the current time, or random number generators.
+    - Make code easier to test by removing or isolating side effects
+    - Use abstraction by defining a “contract” with any outside modules. This contract governs inputs and outputs and allows you to swap out the outside modules with different ones so long as they follow the contract. This allows you to customize the behavior without having to change big parts of the program.
+    - If your program is performing a function that is not behind an interface that function is “tightly coupled” to that part of the code because it is hard to customize. By extracting that functionality to a separate module, we gain the ability to customize it by writing different modules that implement the same interface. This also goes by the name “dependency injection”.
 
 ## Memory Leaks In Python
 
