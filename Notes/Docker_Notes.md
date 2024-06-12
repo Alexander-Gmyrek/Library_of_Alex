@@ -3,7 +3,7 @@
 Created: May 31, 2024 2:32 PM
 
 ## Quick notes
-
+- If you keep having a problem you thought you fixed try deleting the container and building it again.
 ## What is Docker?
 
 Docker is a platform that allows you to package applications into nice little boxes. This includes everything they need to function, aka their “dependencies”.  This box is called a “Container” and is the core piece in the “Containerization” process. This box can be accessed via "ports" that allow you to send info in or out, along with a few other access methods. These boxes can be run on any machine with Docker installed regardless of operating system or other device specific software configurations, assuming it meets the necessary hardware requirements. This means that you can give the box to anyone with Docker and they will be able to use it without needing anything else. 
