@@ -4,7 +4,7 @@ It's open, and encouraged, for anyone to contribute your knowledge along with ho
 
 Feel free to get started on one of the projects or just explore any topic that interests you. 
 If you encounter and resolve any issues, notice something I missed, or use this info in your own projects be sure to let everybody know by contributing!
-Remember collaboration helps everybody.
+Remember collaboration helps everybody. 
 
 ## How to Contribute
 1. Fork the repository
